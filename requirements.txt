@@ -1,0 +1,5 @@
+spotipy
+matplotlib
+pandas
+python-dotenv
+tabulate
