@@ -4,6 +4,8 @@ This is a project that uses the **Spotify** API to create an interactive dashboa
 
 ## Architecture diagram
 
+![Architecture](imgs/Spotify-dashboard-diagram.drawio.png)
+
 ## Technologies Used
 
 - **Backend**: FastAPI
