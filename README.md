@@ -23,7 +23,7 @@ Follow the steps below to test the application locally and with your Spotify pro
 ### Spotify for Developers
 1. Create an App on [Spotify for Developers](https://developer.spotify.com/dashboard)
 2. Input your custom app name and app description
-3. Redirect URIs use '''http://localhost:8000/callback'''
+3. Redirect URIs use **http://localhost:8000/callback**
 4. In API section, select **Web API** and click Save
 5. Collect the Client ID and Client secret
 
