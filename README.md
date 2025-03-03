@@ -4,6 +4,14 @@ This is a project that uses the **Spotify** API to create an interactive dashboa
 
 ## Architecture diagram
 
+## Technologies Used
+
+- **Backend**: FastAPI
+- **Frontend**: HTML, CSS, JavaScript
+- **Spotify API**: To obtain data about songs and their characteristics.
+- **Uvicorn**: ASGI server for running FastAPI.
+- **Jinja2**: Template engine to render HTML pages dynamically.
+
 ## Prerequisites
 - Python 3.7+ 
 - Git
