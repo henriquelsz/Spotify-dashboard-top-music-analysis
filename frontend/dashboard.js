@@ -19,3 +19,9 @@ async function fetchTopTracks() {
 }
 
 window.onload = fetchTopTracks;
+
+const insightsLink = document.createElement("a");
+insightsLink.href = `insights.html?track_id=${track.id}`;
+insightsLink.innerText = track.name;
+row.insertCell().appendChild(insightsLink);
+
