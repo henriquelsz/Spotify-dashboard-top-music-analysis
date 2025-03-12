@@ -1,14 +1,21 @@
-from fastapi import APIRouter, HTTPException
-from spotify_client import SpotifyClient
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import RedirectResponse, JSONResponse
+from .spotify_client import SpotifyClient
+from spotipy.client import Spotify
+from config.redis_client import get_token_from_redis
 
 router = APIRouter()
 
 @router.get("/track-insights/{track_id}")
 def get_track_insights(track_id : str):
-    spotify = SpotifyClient()
+    token = get_token_from_redis()
+    if not token:
+        return JSONResponse({"error ": "User not authenticated"}, status_code=401)
+    
+    spotify = Spotify(auth=token)
     try:
-        track_details = spotify.get_track_details(track_id)
-        audio_features = spotify.get_audio_features(track_id)
+        track_details = spotify.track(track_id)
+        audio_features = spotify.audio_features(track_id)
 
         insights = {
             "name": track_details['name'],
@@ -31,9 +38,9 @@ def get_track_insights(track_id : str):
 
 @router.get("/artist-insights/{artist_id}")
 def get_artist_insights(artist_id : str):
-    sportify = SpotifyClient()
+    sportify = Spotify(token)
     try:
-        artist = spotify.get_artist_details(artist_id)
+        artist = spotify.artist(artist_id)
 
         insights = {
             "name": artist['name'],

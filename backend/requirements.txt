@@ -4,3 +4,4 @@ spotipy
 pandas
 matplotlib
 python-dotenv
+redis

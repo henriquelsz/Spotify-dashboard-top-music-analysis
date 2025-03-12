@@ -1,13 +1,32 @@
 import matplotlib
 matplotlib.use('Agg')  # Força modo "sem tela", apenas salvando imagem
 
+import spotipy
+from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse, JSONResponse
+from config.redis_client import get_token_from_redis
 import pandas as pd
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 
+router = APIRouter()
 
-def gerar_dashboard(sp):
+@router.get("/top-tracks")
+async def top_tracks(request: Request):
+    token_info = get_token_from_redis()
+    if not token_info:
+        return JSONResponse({"error ": "User not authenticated"}, status_code=401)
+
+    sp = spotipy.Spotify(auth=token_info)
+    df, graph = await gen_dashboard(sp)
+
+    return JSONResponse({
+        "tracks": df.to_dict(orient="records"),
+        "graph": graph
+    })
+
+async def gen_dashboard(sp):
     top_tracks = sp.current_user_top_tracks(limit=20)
 
     tracks = []

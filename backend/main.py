@@ -2,11 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-from config.settings import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI
-from src.dashboard import gerar_dashboard
+from src.spotify_client import SpotifyClient
+from src.insights import router as insights_router
+from src.dashboard import router as dashboard_router
+from config.redis_client import store_token_to_redis
 
 app = FastAPI()
+
+app.include_router(dashboard_router, prefix="/dashboards")
+app.include_router(insights_router, prefix="/insights")
 
 # Configura CORS para aceitar requisições do front
 app.add_middleware(
@@ -17,36 +21,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-sp_oauth = SpotifyOAuth(
-    client_id=SPOTIFY_CLIENT_ID,
-    client_secret=SPOTIFY_CLIENT_SECRET,
-    redirect_uri=SPOTIFY_REDIRECT_URI,
-    scope="user-top-read"
-)
+sp_oauth = SpotifyClient()
 
 session_cache = {}
 
 @app.get("/login")
-def login():
+async def login():
     return RedirectResponse(sp_oauth.get_authorize_url())
 
 @app.get("/callback")
-def callback(request: Request):
+def callback(request: Request, code: str):
     code = request.query_params.get("code")
     token_info = sp_oauth.get_access_token(code)
-    session_cache["token_info"] = token_info
+
+    #Collect the token information
+    access_token = token_info['access_token']
+    expires_in = token_info['expires_in'] #information in seconds
+
+    store_token_to_redis(access_token=access_token, expires_in=expires_in) 
+
     return RedirectResponse("http://localhost:3000/dashboard.html")
 
-@app.get("/top-tracks")
-def top_tracks():
-    token_info = session_cache.get("token_info")
-    if not token_info:
-        return JSONResponse({"error": "Usuário não autenticado"}, status_code=401)
 
-    sp = spotipy.Spotify(auth=token_info['access_token'])
-    df, graph = gerar_dashboard(sp)
-
-    return JSONResponse({
-        "tracks": df.to_dict(orient="records"),
-        "graph": graph
-    })

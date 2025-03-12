@@ -1,5 +1,5 @@
 async function fetchTopTracks() {
-    const response = await fetch("http://localhost:8000/top-tracks");
+    const response = await fetch("http://localhost:8000/dashboards/top-tracks");
     const data = await response.json();
 
     if (data.error) {

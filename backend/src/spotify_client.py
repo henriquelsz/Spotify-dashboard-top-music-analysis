@@ -15,7 +15,7 @@ class SpotifyClient:
             client_id=SPOTIFY_CLIENT_ID,
             client_secret=SPOTIFY_CLIENT_SECRET,
             redirect_uri=SPOTIFY_REDIRECT_URI,
-            scope="user-top-read" #permissao para retornar 20 musicas, artistas e generos mais escutados 
+            scope="user-read-private user-top-read user-library-read" #permissao para retornar 20 musicas, artistas e generos mais escutados 
         )
 
     @property
@@ -24,12 +24,7 @@ class SpotifyClient:
         return self.__sp_oauth
     
     #metodos publicos
-    def get_top_tracks(self, time_range="medium_term"):
-        results = self.__sp_oauth.current_user_top_tracks(limit=20, time_range=time_range)
-        return results['items']
-    def get_track_details(self, track_id):
-        return self.__sp_oauth.track(track_id)
-    def get_audio_features(self, track_id):
-        return self.__sp_oauth.audio_features([track_id])[0]
-    def get_artist_details(self, artist_id):
-        return self.__sp_oauth.artist[artist_id]
+    def get_authorize_url(self):
+        return self.__sp_oauth.get_authorize_url()
+    def get_access_token(self, code):
+        return self.__sp_oauth.get_access_token(code)
