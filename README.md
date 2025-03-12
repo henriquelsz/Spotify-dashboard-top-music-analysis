@@ -15,9 +15,10 @@ This is a project that uses the **Spotify** API to create an interactive dashboa
 - **Jinja2**: Template engine to render HTML pages dynamically.
 
 ## Prerequisites
-- Python 3.7+ 
+- Python 3.8+ 
 - Git
 - Account on Spotify and Spotify for Developers
+- Have a [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) running on port 6379
 
 ## Running locally
 Follow the steps below to test the application locally and with your Spotify profile
